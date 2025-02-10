@@ -51,7 +51,7 @@ spring.redis.port=6379
 ```sh
 mvn spring-boot:run
 ```
-**Base URL:** `http://localhost:8080/api/wanted`
+**Base URL:** `http://localhost:8080/api/v1.0.0/wanted`
 
 ---
 
@@ -72,15 +72,15 @@ mvn spring-boot:run
 #### Example Requests
 Fetch page 1:
 ```
-GET http://localhost:8080/api/wanted?page=1
+GET http://localhost:8080/api/v1.0.0/wanted?page=1
 ```
 Search by name:
 ```
-GET http://localhost:8080/api/wanted?page=1&name=Livshits
+GET http://localhost:8080/api/v1.0.0/wanted?page=1&name=Livshits
 ```
 Filter by nationality:
 ```
-GET http://localhost:8080/api/wanted?page=1&nationality=Russian
+GET http://localhost:8080/api/v1.0.0/wanted?page=1&nationality=Russian
 ```
 
 #### Example JSON Response
