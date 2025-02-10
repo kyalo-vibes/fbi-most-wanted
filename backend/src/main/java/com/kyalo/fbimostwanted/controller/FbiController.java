@@ -20,7 +20,13 @@ public class FbiController {
     }
 
     @GetMapping
-    public List<WantedPerson> getWantedPersons(@RequestParam(defaultValue = "1") @Min(1) int page) {
-        return fbiService.fetchWantedPersons(page);
+    public List<WantedPerson> getWantedPersons(
+            @RequestParam(defaultValue = "1") @Min(1) int page,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String race,
+            @RequestParam(required = false) String nationality,
+            @RequestParam(required = false) String sex) {
+
+        return fbiService.fetchWantedPersons(page, name, race, nationality, sex);
     }
 }

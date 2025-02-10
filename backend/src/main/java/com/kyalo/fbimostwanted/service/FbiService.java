@@ -19,17 +19,32 @@ public class FbiService {
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String FBI_API_URL = "https://api.fbi.gov/wanted/v1/list";
 
-    @Cacheable(value = "wantedList", key = "'page_' + #page", unless = "#result.isEmpty()")
-    public List<WantedPerson> fetchWantedPersons(int page) {
-        logger.info("Fetching fresh data from FBI API, page: {}", page);
+    @Cacheable(value = "wantedList", key = "'page_' + #page + " +
+            "(#name != null ? '_name_' + #name : '') + " +
+            "(#race != null ? '_race_' + #race : '') + " +
+            "(#nationality != null ? '_nationality_' + #nationality : '') + " +
+            "(#sex != null ? '_sex_' + #sex : '')", unless = "#result.isEmpty()")
+    public List<WantedPerson> fetchWantedPersons(int page, String name, String race, String nationality, String sex) {
+        logger.info("Fetching fresh data from FBI API, page: {}, filters: name={}, race={}, nationality={}, sex={}",
+                page, name, race, nationality, sex);
 
+        // Build the base URL for fetching data (without filters)
         String url = UriComponentsBuilder.fromHttpUrl(FBI_API_URL)
                 .queryParam("page", page)
                 .toUriString();
 
         var response = restTemplate.getForObject(url, FbiApiResponse.class);
+
         if (response != null && response.getItems() != null) {
-            return response.getItems().stream().map(this::mapToWantedPerson).collect(Collectors.toList());
+            return response.getItems().stream()
+                    .map(this::mapToWantedPerson)
+                    .filter(person ->
+                            (name == null || (person.getTitle() != null && person.getTitle().toLowerCase().contains(name.toLowerCase()))) &&
+                                    (race == null || (person.getRace() != null && person.getRace().equalsIgnoreCase(race))) &&
+                                    (nationality == null || (person.getNationality() != null && person.getNationality().equalsIgnoreCase(nationality))) &&
+                                    (sex == null || (person.getSex() != null && person.getSex().equalsIgnoreCase(sex)))
+                    )
+                    .collect(Collectors.toList());
         }
         return List.of();
     }
