@@ -1,8 +1,8 @@
 # 🚀 FBI Most Wanted Backend - Spring Boot API
 
 **Version:** 1.0.0  
-**Author:** [Your Name]  
-**Tech Stack:** Spring Boot 3.x, Redis, REST API, Maven, JUnit, Mockito, WireMock  
+**Author:** Kevin Kyalo  
+**Tech Stack:** Spring Boot 3, Redis, REST API, Maven, JUnit, Mockito, WireMock  
 
 ## 📌 Overview
 This backend API **fetches, processes, caches, and serves** FBI Most Wanted data, enabling **pagination, search, filtering, and high-performance caching**.
