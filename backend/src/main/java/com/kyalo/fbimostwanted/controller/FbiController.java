@@ -1,5 +1,6 @@
 package com.kyalo.fbimostwanted.controller;
 
+import com.kyalo.fbimostwanted.model.PaginatedResponse;
 import com.kyalo.fbimostwanted.model.WantedPerson;
 import com.kyalo.fbimostwanted.service.FbiService;
 import jakarta.validation.constraints.Min;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1.0.0/wanted")
+@RequestMapping("/api/v1.0.0/wanted")
 public class FbiController {
     private final FbiService fbiService;
 
@@ -20,7 +21,7 @@ public class FbiController {
     }
 
     @GetMapping
-    public List<WantedPerson> getWantedPersons(
+    public PaginatedResponse<WantedPerson> getWantedPersons(
             @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String race,
@@ -30,3 +31,4 @@ public class FbiController {
         return fbiService.fetchWantedPersons(page, name, race, nationality, sex);
     }
 }
+

@@ -2,6 +2,7 @@ package com.kyalo.fbimostwanted.service;
 
 import com.kyalo.fbimostwanted.model.FbiApiResponse;
 import com.kyalo.fbimostwanted.model.FbiItem;
+import com.kyalo.fbimostwanted.model.PaginatedResponse;
 import com.kyalo.fbimostwanted.model.WantedPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,19 +17,22 @@ import java.util.stream.Collectors;
 @Service
 public class FbiService {
     private static final Logger logger = LoggerFactory.getLogger(FbiService.class);
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private static final String FBI_API_URL = "https://api.fbi.gov/wanted/v1/list";
+
+    public FbiService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Cacheable(value = "wantedList", key = "'page_' + #page + " +
             "(#name != null ? '_name_' + #name : '') + " +
             "(#race != null ? '_race_' + #race : '') + " +
             "(#nationality != null ? '_nationality_' + #nationality : '') + " +
-            "(#sex != null ? '_sex_' + #sex : '')", unless = "#result.isEmpty()")
-    public List<WantedPerson> fetchWantedPersons(int page, String name, String race, String nationality, String sex) {
+            "(#sex != null ? '_sex_' + #sex : '')", unless = "#result.data.isEmpty()")
+    public PaginatedResponse<WantedPerson> fetchWantedPersons(int page, String name, String race, String nationality, String sex) {
         logger.info("Fetching fresh data from FBI API, page: {}, filters: name={}, race={}, nationality={}, sex={}",
                 page, name, race, nationality, sex);
 
-        // Build the base URL for fetching data (without filters)
         String url = UriComponentsBuilder.fromHttpUrl(FBI_API_URL)
                 .queryParam("page", page)
                 .toUriString();
@@ -36,7 +40,7 @@ public class FbiService {
         var response = restTemplate.getForObject(url, FbiApiResponse.class);
 
         if (response != null && response.getItems() != null) {
-            return response.getItems().stream()
+            List<WantedPerson> filteredResults = response.getItems().stream()
                     .map(this::mapToWantedPerson)
                     .filter(person ->
                             (name == null || (person.getTitle() != null && person.getTitle().toLowerCase().contains(name.toLowerCase()))) &&
@@ -45,8 +49,12 @@ public class FbiService {
                                     (sex == null || (person.getSex() != null && person.getSex().equalsIgnoreCase(sex)))
                     )
                     .collect(Collectors.toList());
+
+            int totalPages = (int) Math.ceil((double) response.getTotal() / filteredResults.size());
+            return new PaginatedResponse<WantedPerson>(page, totalPages, response.getTotal(), filteredResults);
         }
-        return List.of();
+
+        return new PaginatedResponse<>(page, 0, 0, List.of());
     }
 
     private WantedPerson mapToWantedPerson(FbiItem item) {
