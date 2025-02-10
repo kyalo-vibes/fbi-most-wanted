@@ -1,0 +1,4 @@
+package com.kyalo.fbimostwanted.config;
+
+public class AppConfig {
+}
