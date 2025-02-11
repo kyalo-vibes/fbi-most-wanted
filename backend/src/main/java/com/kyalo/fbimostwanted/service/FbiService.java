@@ -19,6 +19,7 @@ public class FbiService {
     private static final Logger logger = LoggerFactory.getLogger(FbiService.class);
     private final RestTemplate restTemplate;
     private static final String FBI_API_URL = "https://api.fbi.gov/wanted/v1/list";
+    private static final int PAGE_SIZE = 20; // Set the page size to 20
 
     public FbiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -33,13 +34,16 @@ public class FbiService {
         logger.info("Fetching fresh data from FBI API, page: {}, filters: name={}, race={}, nationality={}, sex={}",
                 page, name, race, nationality, sex);
 
+        // Construct the API URL with page and pageSize parameters
         String url = UriComponentsBuilder.fromHttpUrl(FBI_API_URL)
                 .queryParam("page", page)
+                .queryParam("pageSize", PAGE_SIZE) // Ensure only 20 results per request
                 .toUriString();
 
         var response = restTemplate.getForObject(url, FbiApiResponse.class);
 
         if (response != null && response.getItems() != null) {
+            // Apply additional filtering on top of API response
             List<WantedPerson> filteredResults = response.getItems().stream()
                     .map(this::mapToWantedPerson)
                     .filter(person ->
@@ -50,8 +54,9 @@ public class FbiService {
                     )
                     .collect(Collectors.toList());
 
-            int totalPages = (int) Math.ceil((double) response.getTotal() / filteredResults.size());
-            return new PaginatedResponse<WantedPerson>(page, totalPages, response.getTotal(), filteredResults);
+            int totalPages = (int) Math.ceil((double) response.getTotal() / PAGE_SIZE);
+
+            return new PaginatedResponse<>(page, totalPages, response.getTotal(), filteredResults);
         }
 
         return new PaginatedResponse<>(page, 0, 0, List.of());
