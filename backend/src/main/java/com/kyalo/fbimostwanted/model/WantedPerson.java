@@ -1,5 +1,6 @@
 package com.kyalo.fbimostwanted.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.io.Serial;
@@ -7,6 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WantedPerson implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -28,6 +30,12 @@ public class WantedPerson implements Serializable {
     private String eyeColor;
     private List<String> fieldOffices;
     private List<FileInfo> externalFiles;
+    private List<String> occupations;
+    private String placeOfBirth;
+    private List<String> datesOfBirthUsed;
+    private List<String> subjects;
+    private String category;
+    private String placeOfInterest;
 
     public String getUid() {
         return uid;
@@ -163,5 +171,53 @@ public class WantedPerson implements Serializable {
 
     public void setExternalFiles(List<FileInfo> externalFiles) {
         this.externalFiles = externalFiles;
+    }
+
+    public List<String> getOccupations() {
+        return occupations;
+    }
+
+    public void setOccupations(List<String> occupations) {
+        this.occupations = occupations;
+    }
+
+    public String getPlaceOfBirth() {
+        return placeOfBirth;
+    }
+
+    public void setPlaceOfBirth(String placeOfBirth) {
+        this.placeOfBirth = placeOfBirth;
+    }
+
+    public List<String> getDatesOfBirthUsed() {
+        return datesOfBirthUsed;
+    }
+
+    public void setDatesOfBirthUsed(List<String> datesOfBirthUsed) {
+        this.datesOfBirthUsed = datesOfBirthUsed;
+    }
+
+    public List<String> getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(List<String> subjects) {
+        this.subjects = subjects;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getPlaceOfInterest() {
+        return placeOfInterest;
+    }
+
+    public void setPlaceOfInterest(String placeOfInterest) {
+        this.placeOfInterest = placeOfInterest;
     }
 }

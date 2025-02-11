@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class FbiService {
     private static final Logger logger = LoggerFactory.getLogger(FbiService.class);
     private final RestTemplate restTemplate;
-    private static final String FBI_API_URL = "https://api.fbi.gov/wanted/v1/list";
+    private static final String FBI_API_URL = "https://api.fbi.gov/wanted/v1";
     private static final int PAGE_SIZE = 20; // Set the page size to 20
 
     public FbiService(RestTemplate restTemplate) {
@@ -30,11 +30,14 @@ public class FbiService {
             "(#ageMin != null ? '_ageMin_' + #ageMin : '') + " +
             "(#ageMax != null ? '_ageMax_' + #ageMax : '') + " +
             "(#hairColor != null ? '_hairColor_' + #hairColor : '') + " +
-            "(#eyeColor != null ? '_eyeColor_' + #eyeColor : '')",
+            "(#eyeColor != null ? '_eyeColor_' + #eyeColor : '') + " +
+            "(#category != null ? '_category_' + #category : '') + " +
+            "(#placeOfInterest != null ? '_placeOfInterest_' + #placeOfInterest : '')",
             unless = "#result.data.isEmpty()")
     public PaginatedResponse<WantedPerson> fetchWantedPersons(
             int page, String name, String race, String nationality, String sex,
-            Integer ageMin, Integer ageMax, String hairColor, String eyeColor) {
+            Integer ageMin, Integer ageMax, String hairColor, String eyeColor,
+            String category, String placeOfInterest) {
 
         logger.info("Fetching fresh data from FBI API, page: {}, filters: name={}, race={}, nationality={}, sex={}, ageMin={}, ageMax={}, hairColor={}, eyeColor={}",
                 page, name, race, nationality, sex, ageMin, ageMax, hairColor, eyeColor);
@@ -59,7 +62,9 @@ public class FbiService {
                                     (ageMin == null || (person.getAgeMin() != null && person.getAgeMin() >= ageMin)) &&
                                     (ageMax == null || (person.getAgeMax() != null && person.getAgeMax() <= ageMax)) &&
                                     (hairColor == null || (person.getHairColor() != null && person.getHairColor().toLowerCase().contains(hairColor.toLowerCase()))) &&
-                                    (eyeColor == null || (person.getEyeColor() != null && person.getEyeColor().toLowerCase().contains(eyeColor.toLowerCase())))
+                                    (eyeColor == null || (person.getEyeColor() != null && person.getEyeColor().toLowerCase().contains(eyeColor.toLowerCase()))) &&
+                                    (category == null || person.getCategory().equalsIgnoreCase(category)) &&
+                                    (placeOfInterest == null || person.getPlaceOfInterest().equalsIgnoreCase(placeOfInterest))
                     )
                     .collect(Collectors.toList());
 
@@ -88,6 +93,13 @@ public class FbiService {
         person.setAgeMax(item.getAgeMax());
         person.setHairColor(item.getHairColor());
         person.setEyeColor(item.getEyeColor());
+        person.setOccupations(item.getOccupations());
+        person.setPlaceOfBirth(item.getPlaceOfBirth());
+        person.setDatesOfBirthUsed(item.getDatesOfBirthUsed());
+        person.setSubjects(item.getSubjects());
+
+        person.setCategory(getCategoryFromSubjects(item.getSubjects()));
+        person.setPlaceOfInterest(getPlaceOfInterest(item.getSubjects()));
 
         if (item.getImages() != null && !item.getImages().isEmpty()) {
             person.setImageUrl(item.getImages().get(0).getLarge());
@@ -100,5 +112,45 @@ public class FbiService {
             person.setExternalFiles(fileDetails);
         }
         return person;
+    }
+
+    private String getCategoryFromSubjects(List<String> subjects) {
+        if (subjects == null || subjects.isEmpty()) return "Unknown";
+
+        for (String subject : subjects) {
+            String lowerSubject = subject.toLowerCase();
+            if (lowerSubject.contains("homicide") || lowerSubject.contains("violent crime") || lowerSubject.contains("sexual assault")) {
+                return "Violent Crimes";
+            } else if (lowerSubject.contains("missing") || lowerSubject.contains("kidnapping") || lowerSubject.contains("ecap")) {
+                return "Missing Persons";
+            } else if (lowerSubject.contains("cyber")) {
+                return "Cyber Crimes";
+            } else if (lowerSubject.contains("white-collar") || lowerSubject.contains("criminal enterprise") || lowerSubject.contains("money laundering")) {
+                return "White-Collar Crimes";
+            } else if (lowerSubject.contains("terrorism") || lowerSubject.contains("domestic terrorism") || lowerSubject.contains("transnational repression")) {
+                return "Terrorism";
+            } else if (lowerSubject.contains("human trafficking")) {
+                return "Human Trafficking";
+            } else if (lowerSubject.contains("most wanted") || lowerSubject.contains("bank robbers")) {
+                return "Most Wanted";
+            } else if (lowerSubject.contains("seeking information") || lowerSubject.contains("counterintelligence")) {
+                return "Seeking Information";
+            }
+        }
+        return "Other";
+    }
+
+    private String getPlaceOfInterest(List<String> subjects) {
+        if (subjects == null || subjects.isEmpty()) return null;
+
+        List<String> knownPlaces = List.of("Indian Country", "Iran", "Navajo", "China");
+        for (String subject : subjects) {
+            for (String place : knownPlaces) {
+                if (subject.contains(place)) {
+                    return place;
+                }
+            }
+        }
+        return null;
     }
 }

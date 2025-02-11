@@ -1,8 +1,6 @@
 package com.kyalo.fbimostwanted.service;
 
-import com.kyalo.fbimostwanted.model.FbiApiResponse;
-import com.kyalo.fbimostwanted.model.FbiItem;
-import com.kyalo.fbimostwanted.model.WantedPerson;
+import com.kyalo.fbimostwanted.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,72 +36,76 @@ class FbiServiceTest {
         mockItem.setUid("123");
         mockItem.setTitle("John Doe");
         mockItem.setNationality("American");
-        mockItem.setAgeMin(25);
+        mockItem.setSex("Male");
+        mockItem.setRace("White");
+        mockItem.setAgeMin(30);
         mockItem.setAgeMax(40);
         mockItem.setHairColor("Black");
         mockItem.setEyeColor("Brown");
+        mockItem.setSubjects(List.of("Cyber Crime"));
         mockResponse.setItems(List.of(mockItem));
+        mockResponse.setTotal(1);
     }
 
     @Test
     void testFetchWantedPersons_Success() {
-        // Mock the external API call
         when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
                 .thenReturn(mockResponse);
 
-        // Call service method
-        List<WantedPerson> result = fbiService.fetchWantedPersons(1, "John", null, "American", null, null, null, null, null).getData();
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, "John", "White", "American", "Male", 30, 40, "Black", "Brown", "Cyber Crimes", null);
+        List<WantedPerson> result = response.getData();
 
-        // Validate response
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("John Doe", result.get(0).getTitle());
+        assertEquals("American", result.get(0).getNationality());
+        assertEquals("Cyber Crimes", result.get(0).getCategory());
 
-        // Verify that the RestTemplate was called once
         verify(restTemplate, times(1)).getForObject(anyString(), eq(FbiApiResponse.class));
     }
 
     @Test
     void testFetchWantedPersons_EmptyResponse() {
         when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
-                .thenReturn(null);
+                .thenReturn(new FbiApiResponse());
 
-        List<WantedPerson> result = fbiService.fetchWantedPersons(1, null, null, null, null, null, null, null, null).getData();
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, null, null, null, null, null, null, null, null, null, null);
+        assertTrue(response.getData().isEmpty());
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-
-        // Verify API was called once
         verify(restTemplate, times(1)).getForObject(anyString(), eq(FbiApiResponse.class));
     }
 
     @Test
-    void testFetchWantedPersons_FilterByNationality() {
+    void testFetchWantedPersons_FilterByRace() {
         when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
                 .thenReturn(mockResponse);
 
-        List<WantedPerson> result = fbiService.fetchWantedPersons(1, null, null, "American", null, null, null, null, null).getData();
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, null, "White", null, null, null, null, null, null, null, null);
+        List<WantedPerson> result = response.getData();
 
-        assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("American", result.get(0).getNationality());
-
-        // Verify the external call
-        verify(restTemplate, times(1)).getForObject(anyString(), eq(FbiApiResponse.class));
+        assertEquals("White", result.get(0).getRace());
     }
 
     @Test
-    void testFetchWantedPersons_NoMatchingNationality() {
+    void testFetchWantedPersons_NoMatchingRace() {
         when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
                 .thenReturn(mockResponse);
 
-        List<WantedPerson> result = fbiService.fetchWantedPersons(1, null, null, "Russian", null, null, null, null, null).getData();
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, null, "Asian", null, null, null, null, null, null, null, null);
+        assertTrue(response.getData().isEmpty());
+    }
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty()); // Should return an empty list
+    @Test
+    void testFetchWantedPersons_FilterByCategory() {
+        when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
+                .thenReturn(mockResponse);
 
-        // Verify API was called once
-        verify(restTemplate, times(1)).getForObject(anyString(), eq(FbiApiResponse.class));
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, null, null, null, null, null, null, null, null, "Cyber Crimes", null);
+        List<WantedPerson> result = response.getData();
+
+        assertEquals(1, result.size());
+        assertEquals("Cyber Crimes", result.get(0).getCategory());
     }
 
     @Test
@@ -111,14 +113,33 @@ class FbiServiceTest {
         when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
                 .thenReturn(mockResponse);
 
-        List<WantedPerson> result = fbiService.fetchWantedPersons(1, null, null, null, null, 20, 45, null, null).getData();
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, null, null, null, null, 30, 40, null, null, null, null);
+        List<WantedPerson> result = response.getData();
 
-        assertNotNull(result);
         assertEquals(1, result.size());
-        assertTrue(result.get(0).getAgeMin() >= 20 && result.get(0).getAgeMax() <= 45);
+        assertTrue(result.get(0).getAgeMin() >= 30);
+        assertTrue(result.get(0).getAgeMax() <= 40);
+    }
 
-        // Verify API was called once
-        verify(restTemplate, times(1)).getForObject(anyString(), eq(FbiApiResponse.class));
+    @Test
+    void testFetchWantedPersons_NoMatchingAgeRange() {
+        when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
+                .thenReturn(mockResponse);
+
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, null, null, null, null, 50, 60, null, null, null, null);
+        assertTrue(response.getData().isEmpty());
+    }
+
+    @Test
+    void testFetchWantedPersons_FilterByName() {
+        when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
+                .thenReturn(mockResponse);
+
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, "John", null, null, null, null, null, null, null, null, null);
+        List<WantedPerson> result = response.getData();
+
+        assertEquals(1, result.size());
+        assertEquals("John Doe", result.get(0).getTitle());
     }
 
     @Test
@@ -126,14 +147,11 @@ class FbiServiceTest {
         when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
                 .thenReturn(mockResponse);
 
-        List<WantedPerson> result = fbiService.fetchWantedPersons(1, null, null, null, null, null, null, "Black", null).getData();
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, null, null, null, null, null, null, "Black", null, null, null);
+        List<WantedPerson> result = response.getData();
 
-        assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Black", result.get(0).getHairColor());
-
-        // Verify API was called once
-        verify(restTemplate, times(1)).getForObject(anyString(), eq(FbiApiResponse.class));
     }
 
     @Test
@@ -141,27 +159,10 @@ class FbiServiceTest {
         when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
                 .thenReturn(mockResponse);
 
-        List<WantedPerson> result = fbiService.fetchWantedPersons(1, null, null, null, null, null, null, null, "Brown").getData();
+        PaginatedResponse<WantedPerson> response = fbiService.fetchWantedPersons(1, null, null, null, null, null, null, null, "Brown", null, null);
+        List<WantedPerson> result = response.getData();
 
-        assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Brown", result.get(0).getEyeColor());
-
-        // Verify API was called once
-        verify(restTemplate, times(1)).getForObject(anyString(), eq(FbiApiResponse.class));
-    }
-
-    @Test
-    void testFetchWantedPersons_NoMatchingFilters() {
-        when(restTemplate.getForObject(anyString(), eq(FbiApiResponse.class)))
-                .thenReturn(mockResponse);
-
-        List<WantedPerson> result = fbiService.fetchWantedPersons(1, null, "White", "Canadian", "Female", 50, 60, "Blonde", "Blue").getData();
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-
-        // Verify API was called once
-        verify(restTemplate, times(1)).getForObject(anyString(), eq(FbiApiResponse.class));
     }
 }

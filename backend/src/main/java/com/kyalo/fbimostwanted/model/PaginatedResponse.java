@@ -1,5 +1,6 @@
 package com.kyalo.fbimostwanted.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-//@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaginatedResponse<T> implements Serializable {
     public PaginatedResponse(int currentPage, int totalPages, long totalResults, List<T> data) {
         this.currentPage = currentPage;

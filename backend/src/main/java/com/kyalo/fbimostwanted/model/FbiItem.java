@@ -49,6 +49,18 @@ public class FbiItem implements Serializable {
     @JsonProperty("files")
     private List<FbiFile> files;
 
+    @JsonProperty("occupations")
+    private List<String> occupations;
+
+    @JsonProperty("place_of_birth")
+    private String placeOfBirth;
+
+    @JsonProperty("dates_of_birth_used")
+    private List<String> datesOfBirthUsed;
+
+    @JsonProperty("subjects")
+    private List<String> subjects;
+
     public List<FbiImage> getImages() {
         return images;
     }
@@ -183,6 +195,38 @@ public class FbiItem implements Serializable {
 
     public void setFiles(List<FbiFile> files) {
         this.files = files;
+    }
+
+    public List<String> getOccupations() {
+        return occupations;
+    }
+
+    public void setOccupations(List<String> occupations) {
+        this.occupations = occupations;
+    }
+
+    public String getPlaceOfBirth() {
+        return placeOfBirth;
+    }
+
+    public void setPlaceOfBirth(String placeOfBirth) {
+        this.placeOfBirth = placeOfBirth;
+    }
+
+    public List<String> getDatesOfBirthUsed() {
+        return datesOfBirthUsed;
+    }
+
+    public void setDatesOfBirthUsed(List<String> datesOfBirthUsed) {
+        this.datesOfBirthUsed = datesOfBirthUsed;
+    }
+
+    public List<String> getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(List<String> subjects) {
+        this.subjects = subjects;
     }
 }
 
