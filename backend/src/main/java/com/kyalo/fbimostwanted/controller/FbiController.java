@@ -26,9 +26,13 @@ public class FbiController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String race,
             @RequestParam(required = false) String nationality,
-            @RequestParam(required = false) String sex) {
+            @RequestParam(required = false) String sex,
+            @RequestParam(required = false) Integer ageMin,
+            @RequestParam(required = false) Integer ageMax,
+            @RequestParam(required = false) String hairColor,
+            @RequestParam(required = false) String eyeColor) {
 
-        return fbiService.fetchWantedPersons(page, name, race, nationality, sex);
+        return fbiService.fetchWantedPersons(page, name, race, nationality, sex, ageMin, ageMax, hairColor, eyeColor);
     }
 }
 

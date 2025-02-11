@@ -1,7 +1,6 @@
 package com.kyalo.fbimostwanted.controller;
 
 import com.kyalo.fbimostwanted.FbiMostWantedApplication;
-
 import com.kyalo.fbimostwanted.config.RedisTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +43,38 @@ class FbiControllerTest {
     @Test
     void testGetWantedPersons_FilterByNationality() throws Exception {
         mockMvc.perform(get("/api/v1.0.0/wanted?page=1&nationality=Russian")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @Test
+    void testGetWantedPersons_FilterByAgeRange() throws Exception {
+        mockMvc.perform(get("/api/v1.0.0/wanted?page=1&ageMin=25&ageMax=40")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @Test
+    void testGetWantedPersons_FilterByHairColor() throws Exception {
+        mockMvc.perform(get("/api/v1.0.0/wanted?page=1&hairColor=Black")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @Test
+    void testGetWantedPersons_FilterByEyeColor() throws Exception {
+        mockMvc.perform(get("/api/v1.0.0/wanted?page=1&eyeColor=Brown")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @Test
+    void testGetWantedPersons_FilterBySex() throws Exception {
+        mockMvc.perform(get("/api/v1.0.0/wanted?page=1&sex=Male")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isArray());

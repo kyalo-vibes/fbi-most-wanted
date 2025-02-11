@@ -29,10 +29,18 @@ public class FbiService {
             "(#name != null ? '_name_' + #name : '') + " +
             "(#race != null ? '_race_' + #race : '') + " +
             "(#nationality != null ? '_nationality_' + #nationality : '') + " +
-            "(#sex != null ? '_sex_' + #sex : '')", unless = "#result.data.isEmpty()")
-    public PaginatedResponse<WantedPerson> fetchWantedPersons(int page, String name, String race, String nationality, String sex) {
-        logger.info("Fetching fresh data from FBI API, page: {}, filters: name={}, race={}, nationality={}, sex={}",
-                page, name, race, nationality, sex);
+            "(#sex != null ? '_sex_' + #sex : '') + " +
+            "(#ageMin != null ? '_ageMin_' + #ageMin : '') + " +
+            "(#ageMax != null ? '_ageMax_' + #ageMax : '') + " +
+            "(#hairColor != null ? '_hairColor_' + #hairColor : '') + " +
+            "(#eyeColor != null ? '_eyeColor_' + #eyeColor : '')",
+            unless = "#result.data.isEmpty()")
+    public PaginatedResponse<WantedPerson> fetchWantedPersons(
+            int page, String name, String race, String nationality, String sex,
+            Integer ageMin, Integer ageMax, String hairColor, String eyeColor) {
+
+        logger.info("Fetching fresh data from FBI API, page: {}, filters: name={}, race={}, nationality={}, sex={}, ageMin={}, ageMax={}, hairColor={}, eyeColor={}",
+                page, name, race, nationality, sex, ageMin, ageMax, hairColor, eyeColor);
 
         // Construct the API URL with page and pageSize parameters
         String url = UriComponentsBuilder.fromHttpUrl(FBI_API_URL)
@@ -50,7 +58,11 @@ public class FbiService {
                             (name == null || (person.getTitle() != null && person.getTitle().toLowerCase().contains(name.toLowerCase()))) &&
                                     (race == null || (person.getRace() != null && person.getRace().equalsIgnoreCase(race))) &&
                                     (nationality == null || (person.getNationality() != null && person.getNationality().equalsIgnoreCase(nationality))) &&
-                                    (sex == null || (person.getSex() != null && person.getSex().equalsIgnoreCase(sex)))
+                                    (sex == null || (person.getSex() != null && person.getSex().equalsIgnoreCase(sex))) &&
+                                    (ageMin == null || (person.getAgeMin() != null && person.getAgeMin() >= ageMin)) &&
+                                    (ageMax == null || (person.getAgeMax() != null && person.getAgeMax() <= ageMax)) &&
+                                    (hairColor == null || (person.getHairColor() != null && person.getHairColor().toLowerCase().contains(hairColor.toLowerCase()))) &&
+                                    (eyeColor == null || (person.getEyeColor() != null && person.getEyeColor().toLowerCase().contains(eyeColor.toLowerCase())))
                     )
                     .collect(Collectors.toList());
 
@@ -75,6 +87,10 @@ public class FbiService {
         person.setRewardText(item.getRewardText());
         person.setStatus(item.getStatus());
         person.setUrl(item.getUrl());
+        person.setAgeMin(item.getAgeMin());
+        person.setAgeMax(item.getAgeMax());
+        person.setHairColor(item.getHairColor());
+        person.setEyeColor(item.getEyeColor());
 
         if (item.getImages() != null && !item.getImages().isEmpty()) {
             person.setImageUrl(item.getImages().get(0).getLarge());

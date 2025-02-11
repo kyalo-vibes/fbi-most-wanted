@@ -27,6 +27,19 @@ public class FbiItem implements Serializable {
     @JsonProperty("aliases")
     private List<String> aliases;
 
+    @JsonProperty("age_min")
+    private Integer ageMin;
+
+    @JsonProperty("age_max")
+    private Integer ageMax;
+
+    @JsonProperty("hair")
+    private String hairColor;
+
+    @JsonProperty("eyes")
+    private String eyeColor;
+
+
     @JsonProperty("field_offices")
     private List<String> fieldOffices;
 
@@ -55,6 +68,38 @@ public class FbiItem implements Serializable {
 
     public void setAliases(List<String> aliases) {
         this.aliases = aliases;
+    }
+
+    public Integer getAgeMin() {
+        return ageMin;
+    }
+
+    public void setAgeMin(Integer ageMin) {
+        this.ageMin = ageMin;
+    }
+
+    public Integer getAgeMax() {
+        return ageMax;
+    }
+
+    public void setAgeMax(Integer ageMax) {
+        this.ageMax = ageMax;
+    }
+
+    public String getHairColor() {
+        return hairColor;
+    }
+
+    public void setHairColor(String hairColor) {
+        this.hairColor = hairColor;
+    }
+
+    public String getEyeColor() {
+        return eyeColor;
+    }
+
+    public void setEyeColor(String eyeColor) {
+        this.eyeColor = eyeColor;
     }
 
     public String getUrl() {

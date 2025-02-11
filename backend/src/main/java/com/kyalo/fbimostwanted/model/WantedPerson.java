@@ -22,6 +22,10 @@ public class WantedPerson implements Serializable {
     private String rewardText;
     private String status;
     private String url;
+    private Integer ageMin;
+    private Integer ageMax;
+    private String hairColor;
+    private String eyeColor;
     private List<String> fieldOffices;
 
     public String getUid() {
@@ -110,6 +114,38 @@ public class WantedPerson implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Integer getAgeMin() {
+        return ageMin;
+    }
+
+    public void setAgeMin(Integer ageMin) {
+        this.ageMin = ageMin;
+    }
+
+    public Integer getAgeMax() {
+        return ageMax;
+    }
+
+    public void setAgeMax(Integer ageMax) {
+        this.ageMax = ageMax;
+    }
+
+    public String getHairColor() {
+        return hairColor;
+    }
+
+    public void setHairColor(String hairColor) {
+        this.hairColor = hairColor;
+    }
+
+    public String getEyeColor() {
+        return eyeColor;
+    }
+
+    public void setEyeColor(String eyeColor) {
+        this.eyeColor = eyeColor;
     }
 
     public List<String> getFieldOffices() {
