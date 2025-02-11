@@ -46,6 +46,9 @@ public class FbiItem implements Serializable {
     @JsonProperty("images")
     private List<FbiImage> images;
 
+    @JsonProperty("files")
+    private List<FbiFile> files;
+
     public List<FbiImage> getImages() {
         return images;
     }
@@ -172,6 +175,14 @@ public class FbiItem implements Serializable {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public List<FbiFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<FbiFile> files) {
+        this.files = files;
     }
 }
 

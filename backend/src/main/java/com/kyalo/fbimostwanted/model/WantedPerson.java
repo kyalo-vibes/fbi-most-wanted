@@ -27,6 +27,7 @@ public class WantedPerson implements Serializable {
     private String hairColor;
     private String eyeColor;
     private List<String> fieldOffices;
+    private List<FileInfo> externalFiles;
 
     public String getUid() {
         return uid;
@@ -154,5 +155,13 @@ public class WantedPerson implements Serializable {
 
     public void setFieldOffices(List<String> fieldOffices) {
         this.fieldOffices = fieldOffices;
+    }
+
+    public List<FileInfo> getExternalFiles() {
+        return externalFiles;
+    }
+
+    public void setExternalFiles(List<FileInfo> externalFiles) {
+        this.externalFiles = externalFiles;
     }
 }

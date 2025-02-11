@@ -1,9 +1,6 @@
 package com.kyalo.fbimostwanted.service;
 
-import com.kyalo.fbimostwanted.model.FbiApiResponse;
-import com.kyalo.fbimostwanted.model.FbiItem;
-import com.kyalo.fbimostwanted.model.PaginatedResponse;
-import com.kyalo.fbimostwanted.model.WantedPerson;
+import com.kyalo.fbimostwanted.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -94,6 +91,13 @@ public class FbiService {
 
         if (item.getImages() != null && !item.getImages().isEmpty()) {
             person.setImageUrl(item.getImages().get(0).getLarge());
+        }
+
+        if (item.getFiles() != null && !item.getFiles().isEmpty()) {
+            List<FileInfo> fileDetails = item.getFiles().stream()
+                    .map(file -> new FileInfo(file.getName(), file.getUrl())) // Extract name + URL
+                    .collect(Collectors.toList());
+            person.setExternalFiles(fileDetails);
         }
         return person;
     }
