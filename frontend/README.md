@@ -24,8 +24,8 @@ Fetches **FBI Most Wanted** data from a backend API
 
 ### **Clone the Repository**
 ```sh
-git clone https://github.com/yourusername/fbi-most-wanted.git
-cd fbi-most-wanted
+git clone https://github.com/kyalo-vibes/fbi-most-wanted.git
+cd fbi-most-wanted/frontend
 ```
 
 ### **Install dependencies**
