@@ -1,0 +1,4 @@
+package com.kyalo.fbimostwanted.service;
+
+public class AuthService {
+}

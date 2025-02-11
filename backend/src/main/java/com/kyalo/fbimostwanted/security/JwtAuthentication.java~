@@ -1,0 +1,4 @@
+package com.kyalo.fbimostwanted.security;
+
+public class JwtAuthentication {
+}

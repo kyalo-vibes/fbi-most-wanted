@@ -1,1 +1,17 @@
 spring.application.name=fbi-most-wanted
+
+# Database Configuration (PostgreSQL)
+spring.datasource.url=jdbc:postgresql://localhost:5432/auth_db
+spring.datasource.username=your_db_username
+spring.datasource.password=your_db_password
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# Hibernate (JPA)
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# Redis cache configuration
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
+spring.cache.type=redis
