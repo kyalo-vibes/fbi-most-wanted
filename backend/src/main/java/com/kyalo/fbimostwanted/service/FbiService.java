@@ -59,8 +59,23 @@ public class FbiService {
                                     (race == null || (person.getRace() != null && person.getRace().equalsIgnoreCase(race))) &&
                                     (nationality == null || (person.getNationality() != null && person.getNationality().equalsIgnoreCase(nationality))) &&
                                     (sex == null || (person.getSex() != null && person.getSex().equalsIgnoreCase(sex))) &&
-                                    (ageMin == null || (person.getAgeMax() != null && person.getAgeMax() >= ageMin)) &&
-                                    (ageMax == null || (person.getAgeMin() != null && person.getAgeMin() <= ageMax)) &&
+                                    (
+                                            // When both ageMin and ageMax are present, ensure overlap with person's age range
+                                            (ageMin != null && ageMax != null &&
+                                                    (person.getAgeMax() != null && person.getAgeMax() >= ageMin) &&
+                                                    (person.getAgeMin() != null && person.getAgeMin() <= ageMax)
+                                            ) ||
+                                                    // When only ageMin is provided, get all ages >= ageMin
+                                                    (ageMin != null && ageMax == null &&
+                                                            (person.getAgeMax() != null && person.getAgeMax() >= ageMin)
+                                                    ) ||
+                                                    // When only ageMax is provided, get all ages <= ageMax
+                                                    (ageMax != null && ageMin == null &&
+                                                            (person.getAgeMin() != null && person.getAgeMin() <= ageMax)
+                                                    ) ||
+                                                    // If both ageMin and ageMax are null, return all records
+                                                    (ageMin == null && ageMax == null)
+                                    ) &&
                                     (hairColor == null || (person.getHairColor() != null && person.getHairColor().toLowerCase().contains(hairColor.toLowerCase()))) &&
                                     (eyeColor == null || (person.getEyeColor() != null && person.getEyeColor().toLowerCase().contains(eyeColor.toLowerCase()))) &&
                                     (category == null || person.getCategory().equalsIgnoreCase(category)) &&
