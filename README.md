@@ -26,7 +26,7 @@ fbi-most-wanted/
 ```
 
 ## **🚀 How to Run the Application**
-Ensure **Docker** and **Docker Compose** are installed, then run:
+Ensure **Docker** and **Docker Compose** are installed, then run on root of the project:
 ```sh
 docker-compose up --build -d
 ```
@@ -36,9 +36,8 @@ This will:
 ✅ Build and launch **Spring Boot backend**.
 ✅ Build and launch **React frontend**.
 
-Once running:
-- 📌 **Backend API** → [http://localhost:8080/api/v1.0.0/wanted?page=1](http://localhost:8080/api/v1.0.0/wanted?page=1)
-- 🎨 **Frontend UI** → [http://localhost:5173](http://localhost:5173)
+Once running, access the web app on:
+- 📌 **Web Application*  → [http://localhost:5173](http://localhost:5173)
 
 To check running containers:
 ```sh
@@ -48,6 +47,12 @@ To stop the application:
 ```sh
 docker-compose down
 ```
+
+---
+
+## **📜 Documentation Links**
+- 📦 **Backend Documentation** → [backend/README.md](./backend/README.md)
+- 🎨 **Frontend Documentation** → [frontend/README.md](./frontend/README.md)
 
 ---
 
@@ -63,21 +68,17 @@ SPRING_DATASOURCE_PASSWORD=secret
 SPRING_REDIS_HOST=redis
 SPRING_REDIS_PORT=6379
 ```
+## **🛠 Environment Variables**
+Ensure the following **environment variables** are set in `application.properties` or `.env`:
+```properties
+# PostgreSQL Database
+SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/auth_db
+SPRING_DATASOURCE_USERNAME=admin
+SPRING_DATASOURCE_PASSWORD=secret
+
+# Redis Cache
+SPRING_REDIS_HOST=redis
+SPRING_REDIS_PORT=6379
+```
 
 ---
-
-## **📜 Documentation Links**
-- 📦 **Backend Documentation** → [backend/README.md](./backend/README.md)
-- 🎨 **Frontend Documentation** → [frontend/README.md](./frontend/README.md)
-
----
-
-## **📊 Logs & Debugging**
-To view backend logs:
-```sh
-docker-compose logs backend -f
-```
-To view frontend logs:
-```sh
-docker-compose logs frontend -f
-```

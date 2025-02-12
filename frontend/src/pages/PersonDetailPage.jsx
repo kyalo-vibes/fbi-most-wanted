@@ -3,7 +3,7 @@ import PersonDetails from '../components/PersonDetails'
 
 const PersonDetailPage = () => {
   return (
-    <div>
+    <div className='container'>
       <PersonDetails />
     </div>
   )

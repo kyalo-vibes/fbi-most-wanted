@@ -5,18 +5,16 @@ import { useNavigate } from 'react-router-dom';
 const FBIWantedContext = createContext();
 
 export const FBIWantedProvider = ({ children }) => {
-
+    const [total, setTotal] = useState(0);
+    const [filters, setFilters] = useState({});
+    const [pendingFilters, setPendingFilters] = useState({});
     const [persons, setPersons] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filters, setFilters] = useState({});
     const [page, setPage] = useState(1);
-    const [total, setTotal] = useState(0);
-    const [filteredPersons, setFilteredPersons] = useState([]);
 
     const itemsPerPage = 10;
     const navigate = useNavigate();
-
     const token = localStorage.getItem("token");
 
     const fetchPersons = async () => {  
@@ -26,8 +24,14 @@ export const FBIWantedProvider = ({ children }) => {
 
           const params = {
             page,
-            title: searchTerm,
-            ...filters,
+            name: searchTerm || undefined,
+            race: filters.race || undefined,
+            sex: filters.sex || undefined,
+            ageMin: filters.ageMin || undefined,
+            ageMax: filters.ageMax || undefined,
+            hairColor: filters.hairColor || undefined,
+            eyeColor: filters.eyeColor || undefined,
+            category: filters.category || undefined,
           };
 
           // Removes empty filters
@@ -57,7 +61,7 @@ export const FBIWantedProvider = ({ children }) => {
 
         } catch (error) {
             console.error("Error fetching data:", error);
-            if (error.response?.status === 401) {
+            if (error.response?.status === 401 || error.response?.status === 403) {
               localStorage.removeItem("token"); 
               navigate("/login"); 
           }
@@ -68,30 +72,16 @@ export const FBIWantedProvider = ({ children }) => {
 
     useEffect(() => {
       fetchPersons();
-    }, [token, page, searchTerm, filters]);
+    }, [token, page, filters]);
 
-    useEffect(() => {
-      const filterData = () => {
-          const filtered = persons.filter(person => {
-              const matchesSearch = 
-                  !searchTerm || person.title?.toLowerCase().includes(searchTerm.toLowerCase());
+    const applyFilters = () => {
+      setFilters(pendingFilters);
+    }
 
-      
-              const matchesRace = !filters?.race || person.race?.toLowerCase() === filters.race.toLowerCase();
-              const matchesHairColor = !filters?.hairColor || (person.hairColor && person.hairColor.toLowerCase().includes(filters.hairColor.toLowerCase()));
-              const matchesEyeColor = !filters?.eyeColor || person.eyeColor?.toLowerCase() === filters.eyeColor.toLowerCase()
-              const matchesSex = !filters?.sex || person.sex?.toLowerCase() === filters.sex.toLowerCase()
-              const matchesAgeMin = !filters?.ageMin || (person.ageMin && parseInt(person.ageMin) >= parseInt(filters.ageMin))
-              const matchesAgeMax = !filters?.ageMax || (person.ageMax && parseInt(person.ageMax) <= parseInt(filters.ageMax));
-
-              return matchesSearch && (matchesRace || matchesHairColor || matchesEyeColor || matchesSex || matchesAgeMin || matchesAgeMax);
-          });
-
-          setFilteredPersons(filtered);
-      };
-
-      filterData();
-  }, [filters, persons, searchTerm]);
+    const clearFilters = () => {
+      setFilters({});
+      setPendingFilters({});
+    };
 
     const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
     
@@ -99,12 +89,15 @@ export const FBIWantedProvider = ({ children }) => {
   return (
     <FBIWantedContext.Provider
         value={{
-            persons: filteredPersons,
+            persons,
             loading,
             searchTerm,
             setSearchTerm,
             filters,
-            setFilters,
+            pendingFilters,
+            setPendingFilters,
+            applyFilters,
+            clearFilters,
             page,
             setPage,
             totalPages,

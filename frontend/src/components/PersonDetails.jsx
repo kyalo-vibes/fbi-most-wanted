@@ -21,7 +21,7 @@ const PersonDetails = () => {
   const imageUrl = person.imageUrl || "/placeholder.png";
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 mb-5">
       <div className="card shadow-lg border-0 rounded-lg overflow-hidden">
         <div className="row g-0">
           {/* Image Section */}
@@ -32,9 +32,9 @@ const PersonDetails = () => {
               alt={person.title}
               style={{ objectFit: "cover" }}
             />
-            {/* <span className="badge bg-danger position-absolute top-0 start-0 m-3 p-2 shadow">
-              Wanted
-            </span> */}
+            <span className="badge bg-danger position-absolute top-0 start-0 m-3 p-2 shadow">
+              {person.category}
+            </span>
           </div>
 
           {/* Details Section */}
@@ -56,16 +56,37 @@ const PersonDetails = () => {
                 <li className="list-group-item"><strong>🌍 Nationality:</strong> {person.nationality || "N/A"}</li>
                 <li className="list-group-item"><strong>📍 Place of Birth:</strong> {person.placeOfBirth || "Unknown"}</li>
                 <li className="list-group-item"><strong>🕵️‍♂️ Aliases:</strong> {person.aliases?.length ? person.aliases.join(", ") : "None"}</li>
+                <li className="list-group-item"><strong>📖 Subject:</strong> {person.subjects?.length ? person.subjects.join(", ") : "None"}</li>
                 <li className="list-group-item"><strong>💼 Occupation:</strong> {person.occupations?.length ? person.occupations.join(", ") : "Unknown"}</li>
                 {person.field_offices?.length > 0 && (
                   <li className="list-group-item"><strong>🏢 Field Offices:</strong> {person.fieldOffices.join(", ")}</li>
                 )}
               </ul>
 
+              {/* External Files Section */}
+              {person.externalFiles?.length > 0 && (
+                <>
+                  <h4 className="mt-4 border-bottom pb-2">📂 External Files</h4>
+                  <ul className="list-group list-group-flush">
+                    {person.externalFiles.map((file, index) => {
+                      const fileName = file.name && file.name.trim() ? file.name : "N/A";
+                      return (
+                        <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                        <span><strong>{fileName}</strong></span>
+                        <a href={file.url} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary w-25 fw-bold">
+                          📥 Download
+                        </a>
+                      </li>
+                      );
+                    })}
+                  </ul>
+                </>
+              )}
+
               {/* Back Button */}
               <div className="mt-4 text-center">
-                <Link to="/" className="btn btn-outline-secondary w-50 fw-bold">
-                  🔙 Back to List
+                <Link to="/" className="btn btn-outline-primary w-50 fw-bold">
+                🔙 Back to List
                 </Link>
               </div>
             </div>

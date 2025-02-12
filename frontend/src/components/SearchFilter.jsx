@@ -2,15 +2,15 @@ import React, { useContext } from 'react';
 import FBIWantedContext from '../context/FBIWantedContext';
 
 const SearchFilter = () => {
-    const { searchTerm, setSearchTerm, filters, setFilters } = useContext(FBIWantedContext);
+    const { searchTerm, setSearchTerm, pendingFilters, setPendingFilters, applyFilters, clearFilters } = useContext(FBIWantedContext);
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
 
     const handleFilterChange = (e) => {
-        setFilters({
-            ...filters,
+        setPendingFilters({
+            ...pendingFilters,
             [e.target.name]: e.target.value
         });
     };
@@ -31,47 +31,70 @@ const SearchFilter = () => {
                     />
                 </div>
 
-                {/* Filters */}
-                <div className="row g-2">
+                {/* Filters Section */}
+                <div className="container p-3 bg-light rounded shadow-sm">
+                <div className="row g-6">
+                    
                     {/* Race Filter */}
-                    <div className="col-md-3">
-                        <select name="race" className="form-select" value={filters.race} onChange={handleFilterChange}>
-                            <option value="">Filter by Race</option>
-                            <option value="White">White</option>
-                            <option value="Black">Black</option>
-                            <option value="Asian">Asian</option>
-                            <option value="Hispanic">Hispanic</option>
-                        </select>
+                    <div className="col-md-5 col-lg-4">
+                    <label htmlFor="raceFilter" className="form-label fw-semibold">Race</label>
+                    <select id="raceFilter" name="race" className="form-select" value={pendingFilters.race || ""} onChange={handleFilterChange}>
+                        <option value="">All Races</option>
+                        <option value="White">White</option>
+                        <option value="Black">Black</option>
+                        <option value="Asian">Asian</option>
+                        <option value="Hispanic">Hispanic</option>
+                    </select>
                     </div>
 
                     {/* Hair Color Filter */}
-                    <div className="col-md-3">
-                        <select name="hairColor" className="form-select" value={filters.hairColor} onChange={handleFilterChange}>
-                            <option value="">Filter by Hair Color</option>
-                            <option value="Black">Black</option>
-                            <option value="Brown">Brown</option>
-                        </select>
+                    <div className="col-md-5 col-lg-4">
+                    <label htmlFor="hairColorFilter" className="form-label fw-semibold">Hair Color</label>
+                    <select id="hairColorFilter" name="hairColor" className="form-select" value={pendingFilters.hairColor || ""} onChange={handleFilterChange}>
+                        <option value="">All Hair Colors</option>
+                        <option value="Black">Black</option>
+                        <option value="Brown">Brown</option>
+                    </select>
                     </div>
 
                     {/* Eye Color Filter */}
-                    <div className="col-md-3">
-                        <select name="eyeColor" className="form-select" value={filters.eyeColor} onChange={handleFilterChange}>
-                            <option value="">Filter by Eye Color</option>
-                            <option value="Brown">Brown</option>
-                            <option value="Blue">Blue</option>
-                            <option value="Green">Green</option>
-                            <option value="Hazel">Hazel</option>
-                        </select>
+                    <div className="col-md-5 col-lg-4">
+                    <label htmlFor="eyeColorFilter" className="form-label fw-semibold">Eye Color</label>
+                    <select id="eyeColorFilter" name="eyeColor" className="form-select" value={pendingFilters.eyeColor || ""} onChange={handleFilterChange}>
+                        <option value="">All Eye Colors</option>
+                        <option value="Brown">Brown</option>
+                        <option value="Blue">Blue</option>
+                        <option value="Green">Green</option>
+                        <option value="Hazel">Hazel</option>
+                    </select>
                     </div>
 
                     {/* Sex Filter */}
-                    <div className="col-md-3">
-                        <select name="sex" className="form-select" value={filters.sex} onChange={handleFilterChange}>
-                            <option value="">Filter by Sex</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
+                    <div className="col-md-5 col-lg-4">
+                    <label htmlFor="sexFilter" className="form-label fw-semibold">Sex</label>
+                    <select id="sexFilter" name="sex" className="form-select" value={pendingFilters.sex || ""} onChange={handleFilterChange}>
+                        <option value="">All Genders</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
                     </div>
+
+                    {/* Categories Filter */}
+                    <div className="col-md-5 col-lg-4">
+                    <label htmlFor="categoryFilter" className="form-label fw-semibold">Category</label>
+                    <select id="categoryFilter" name="category" className="form-select" value={pendingFilters.category || ""} onChange={handleFilterChange}>
+                        <option value="">All Categories</option>
+                        <option value="Violent Crimes">Violent Crimes</option>
+                        <option value="Missing Persons">Missing Persons</option>
+                        <option value="Cyber Crimes">Cyber Crimes</option>
+                        <option value="White-Collar Crimes">White-Collar Crimes</option>
+                        <option value="Terrorism">Terrorism</option>
+                        <option value="Human Trafficking">Human Trafficking</option>
+                        <option value="Most Wanted">Most Wanted</option>
+                        <option value="Seeking Information">Seeking Information</option>
+                    </select>
+                    </div>
+                </div>
                 </div>
 
                 {/* Age Range Filter */}
@@ -83,7 +106,7 @@ const SearchFilter = () => {
                             name="ageMin"
                             className="form-control"
                             placeholder="Min Age"
-                            value={filters.ageMin}
+                            value={pendingFilters.ageMin || ""}
                             onChange={handleFilterChange}
                         />
                     </div>
@@ -93,11 +116,20 @@ const SearchFilter = () => {
                             name="ageMax"
                             className="form-control"
                             placeholder="Max Age"
-                            value={filters.ageMax}
+                            value={pendingFilters.ageMax || ""}
                             onChange={handleFilterChange}
                         />
                     </div>
                 </div>
+
+                <div className="d-flex justify-content-center gap-3 mt-3">
+                    <button className="btn btn-outline-primary w-50 fw-bold" onClick={applyFilters}>
+                        Apply Filters
+                    </button>
+                    <button className="btn btn-outline-primary w-50 fw-bold" onClick={clearFilters}>
+                        Clear Filters
+                    </button>
+                    </div>
             </div>
         </div>
     );

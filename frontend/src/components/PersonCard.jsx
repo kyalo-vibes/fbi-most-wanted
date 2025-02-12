@@ -15,9 +15,9 @@ const PersonCard = ({ person }) => {
             alt={person.title}
             style={{ height: "250px", objectFit: "cover", borderTopLeftRadius: "10px", borderTopRightRadius: "10px" }}
           />
-          {/* <span className="badge bg-danger position-absolute top-0 start-0 m-2">
-            Wanted
-          </span> */}
+          <span className="badge bg-danger position-absolute top-0 start-0 m-2">
+            {person.category}
+          </span>
         </div>
 
         {/* Card Body */}
