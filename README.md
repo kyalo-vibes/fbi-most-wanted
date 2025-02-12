@@ -7,6 +7,8 @@ This project is a full-stack web application that displays the **FBI Most Wanted
 - **Database**: PostgreSQL for authentication and persistence.
 - **Caching**: Redis for optimized API responses.
 - **Containerized**: Managed using Docker & Docker Compose.
+---
+![Architecture GIF](architecture.gif)
 
 ---
 
