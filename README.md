@@ -8,7 +8,7 @@ This project is a full-stack web application that displays the **FBI Most Wanted
 - **Caching**: Redis for optimized API responses.
 - **Containerized**: Managed using Docker & Docker Compose.
 ---
-![Architecture GIF](architecture.gif)
+![Architecture GIF](Architecture.gif)
 
 ---
 
