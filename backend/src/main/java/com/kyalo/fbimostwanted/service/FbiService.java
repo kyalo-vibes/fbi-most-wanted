@@ -59,8 +59,8 @@ public class FbiService {
                                     (race == null || (person.getRace() != null && person.getRace().equalsIgnoreCase(race))) &&
                                     (nationality == null || (person.getNationality() != null && person.getNationality().equalsIgnoreCase(nationality))) &&
                                     (sex == null || (person.getSex() != null && person.getSex().equalsIgnoreCase(sex))) &&
-                                    (ageMin == null || (person.getAgeMin() != null && person.getAgeMin() >= ageMin)) &&
-                                    (ageMax == null || (person.getAgeMax() != null && person.getAgeMax() <= ageMax)) &&
+                                    (ageMin == null || (person.getAgeMax() != null && person.getAgeMax() >= ageMin)) &&
+                                    (ageMax == null || (person.getAgeMin() != null && person.getAgeMin() <= ageMax)) &&
                                     (hairColor == null || (person.getHairColor() != null && person.getHairColor().toLowerCase().contains(hairColor.toLowerCase()))) &&
                                     (eyeColor == null || (person.getEyeColor() != null && person.getEyeColor().toLowerCase().contains(eyeColor.toLowerCase()))) &&
                                     (category == null || person.getCategory().equalsIgnoreCase(category)) &&
